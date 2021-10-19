@@ -1,7 +1,10 @@
 const Folder = require("../models/Folder");
+const Tasks = require("../models/Task")
+
 
 const getAllFolders = async (req, res) => {
   try {
+    deleteTasksFolder('616e1be27265da59d86c803b')
     const data = await Folder.find({}).populate({
       path: "tasks",
       select: "id name status",
@@ -48,6 +51,7 @@ const deleteFolder = async (req, res) => {
   const { id } = req.params;
   try {
     const data = await Folder.findByIdAndDelete(id);
+    await Tasks.deleteMany({folder:id})
     !data
       ? res.status(404).json({ message: `ID ${id} doesn't exist!` })
       : res.json({ message: "Folder was deleted succesfully", data });
@@ -55,6 +59,7 @@ const deleteFolder = async (req, res) => {
     res.status(500).json({ message: error.message || "Something goes wrong" });
   }
 };
+
 
 const updateFolder = async (req, res) => {
   let { id } = req.params;

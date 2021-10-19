@@ -15,10 +15,6 @@ db.initMongo();
 app.use("/api/carpetas", require("./mongo/router/folders.router"));
 app.use("/api/tareas", require("./mongo/router/tasks.router"));
 
-// //Conectamos con Mongo ----------------------------------------------------------------
-// const db = require("./mongo/mongoose");
-// db.initMongo();
-
 
 //Iniciamos el servidor --------------------------------------------------------------
 app.listen(process.env.PORT, () => {
