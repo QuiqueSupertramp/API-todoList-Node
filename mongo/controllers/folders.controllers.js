@@ -4,7 +4,6 @@ const Tasks = require("../models/Task")
 
 const getAllFolders = async (req, res) => {
   try {
-    deleteTasksFolder('616e1be27265da59d86c803b')
     const data = await Folder.find({}).populate({
       path: "tasks",
       select: "id name status",
