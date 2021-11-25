@@ -27,7 +27,7 @@ const userSchema = new Schema({
       ref: "tasks",
     },
   ],
-});
+},  { versionKey: false });
 
 userSchema.methods.encryptPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
