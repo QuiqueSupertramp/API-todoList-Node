@@ -14,6 +14,7 @@ db.initMongo();
 //Rutas de la API ---------------------------------------------------------------------
 app.use("/api/carpetas", require("./mongo/router/folders.router"));
 app.use("/api/tareas", require("./mongo/router/tasks.router"));
+app.use("/api/usuarios", require("./mongo/router/users.router"));
 
 
 //Iniciamos el servidor --------------------------------------------------------------

@@ -1,5 +1,6 @@
 const Tasks = require("../models/Task");
 const Folder = require("../models/Folder");
+const Users = require("../models/User")
 
 // Read all tasks----------------------------------------
 const getAllTasks = async (req, res) => {
@@ -7,6 +8,9 @@ const getAllTasks = async (req, res) => {
     const data = await Tasks.find({}).populate({
       path: "folder",
       select: "_id name",
+    }).populate({
+      path: "user",
+      select: "id"
     });
     res.json(data);
   } catch (error) {
@@ -24,6 +28,9 @@ const getTaskById = async(req,res) => {
     let data = await Tasks.findById(id).populate({
       path:"folder",
       select:"_id name"
+    }).populate({
+      path: "user",
+      select: "id"
     })
     res.json(data)
   } catch (error) {
@@ -35,12 +42,13 @@ const getTaskById = async(req,res) => {
 
 // Add new task------------------------------------------
 const addNewTask = async (req, res) => {
-  let { name, folder } = req.body;
+  let { name, folder, user } = req.body;
 
   try {
-    let newTask = new Tasks({ name, folder });
+    let newTask = new Tasks({ name, folder, user });
     let data = await newTask.save();
     await Folder.findByIdAndUpdate(folder, { $push: { tasks: data._id } });
+    await Users.findByIdAndUpdate(user, { $push: { tasks: data._id } });
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({
@@ -54,13 +62,9 @@ const deleteTask = async (req, res) => {
   const { id } = req.params;
   try {
     const data = await Tasks.findByIdAndDelete(id);
-
-    !data
-      ? res.status(404).json({ message: `ID ${id} doesn't exist!` })
-      : (await Folder.findByIdAndUpdate(data.folder, {
-          $pull: { tasks: data._id },
-        }),
-        res.json(data));
+    await Folder.findByIdAndUpdate(data.folder, {$pull: { tasks: data._id }})
+    await Users.findByIdAndUpdate(data.user, {$pull: {tasks: data._id}})
+    res.json(data);
   } catch (error) {
     res.status(500).json({ message: error.message || "Something goes wrong" });
   }

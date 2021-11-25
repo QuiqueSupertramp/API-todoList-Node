@@ -9,15 +9,22 @@ const folderSchema = new Schema(
       type: String,
       required: [true, "NAME REQUIRED!"],
     },
-    tasks: [{
+    tasks: [
+      {
         type: Schema.Types.ObjectId,
-        ref: 'tasks'
-    }]
+        ref: "tasks",
+      },
+    ],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
   },
   { versionKey: false }
 );
 
 //  Folder Model----------------------------------------------
-const folderDB = model('folders', folderSchema);
+const folderDB = model("folders", folderSchema);
 
 module.exports = folderDB;

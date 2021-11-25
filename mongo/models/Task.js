@@ -14,7 +14,13 @@ const taskSchema = new Schema({
     },
     folder:{
         type: Schema.Types.ObjectId,
-        ref:'folders'
+        ref:'folders',
+        required: true,
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
+        required: true,
     }
 }, {versionKey: false})
 

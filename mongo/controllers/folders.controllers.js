@@ -1,5 +1,6 @@
 const Folder = require("../models/Folder");
 const Tasks = require("../models/Task")
+const Users = require("../models/User")
 
 
 const getAllFolders = async (req, res) => {
@@ -7,6 +8,9 @@ const getAllFolders = async (req, res) => {
     const data = await Folder.find({}).populate({
       path: "tasks",
       select: "id name status",
+    }).populate({
+      path: "user",
+      select: "id"
     });
     res.json(data);
   } catch (error) {
@@ -23,6 +27,9 @@ const getFolderById = async (req, res) => {
     let data = await Folder.findById(id).populate({
       path: "tasks",
       select: "id name status",
+    }).populate({
+      path: "user",
+      select: "id"
     });
     res.json(data);
   } catch (error) {
@@ -33,11 +40,13 @@ const getFolderById = async (req, res) => {
 };
 
 const addNewFolder = async (req, res) => {
-  const { name } = req.body;
+  const { name, user } = req.body;
+  console.log(user)
 
   try {
-    let newFolder = new Folder({ name });
+    let newFolder = new Folder({ name, user });
     const data = await newFolder.save();
+    await Users.findByIdAndUpdate(user, {$push: {folders: data._id}})
     res.status(201).json({ message: "Folder was created succesfully", data });
   } catch (error) {
     res.status(500).json({
@@ -47,10 +56,12 @@ const addNewFolder = async (req, res) => {
 };
 
 const deleteFolder = async (req, res) => {
-  const { id } = req.params;
+  const { id, user } = req.params;
   try {
     const data = await Folder.findByIdAndDelete(id);
     await Tasks.deleteMany({folder:id})
+    await Users.findByIdAndUpdate(data.user, {$pull: {folders: data._id}})
+    
     !data
       ? res.status(404).json({ message: `ID ${id} doesn't exist!` })
       : res.json({ message: "Folder was deleted succesfully", data });
