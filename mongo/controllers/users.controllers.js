@@ -37,4 +37,6 @@ const addUser = async (req, res) => {
   }
 };
 
+console.log("hola")
+
 module.exports = { getUsers, addUser, getUserById };
