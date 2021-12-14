@@ -7,7 +7,7 @@ const getAllTasks = async (req, res) => {
   try {
     const data = await Tasks.find({}).populate({
       path: "folder",
-      select: "_id name",
+      select: "_id name status",
     }).populate({
       path: "user",
       select: "id"
@@ -27,7 +27,7 @@ const getTaskById = async(req,res) => {
   try {
     let data = await Tasks.findById(id).populate({
       path:"folder",
-      select:"_id name"
+      select:"_id name status"
     }).populate({
       path: "user",
       select: "id"
